@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy New Year!</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(to right, #8e44ad, #e74c3c); /* Gradient from purple to pink */
+            color: #000;
+            transition: background-color 0.5s;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.5s, box-shadow 0.5s;
+            position: relative;
+            z-index: 2; /* Set z-index to 2 to bring the container in front */
+        }
+
+        h1 {
+            color: #0066cc;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .butterfly {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            animation: flutter 2s infinite alternate ease-in-out;
+            z-index: 1; /* Set z-index to 1 to place the butterflies behind the container */
+        }
+
+        @keyframes flutter {
+            0% { transform: translateY(0) rotate(0); }
+            100% { transform: translateY(-20px) rotate(45deg); }
+        }
+
+        /* Styles for the existing butterfly image */
+        img.butterfly-image {
+            width: 100px; /* Adjust the size as needed */
+            height: 100px;
+            position: absolute;
+            animation: flutter 2s infinite alternate ease-in-out;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="greeting-container">
+    <h1 id="greeting-heading">Happy New Year!</h1>
+    <p id="greeting-text">Wishing you a year filled with joy, success, and prosperity. May it be your best year yet!</p>
+    <p>Warm regards,</p>
+    <p>Your's Hemant</p>
+</div>
+
+<!-- Existing butterfly image -->
+<img src="butterfly.svg" alt="" class="butterfly-image">
+
+<script>
+    window.onload = function () {
+        preloadSvg().then(() => {
+            createButterflies();
+        });
+    };
+
+    function preloadSvg() {
+        return fetch('butterfly.svg')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch SVG: ${response.statusText}`);
+                }
+                return response.text();
+            })
+            .then(svgData => {
+                const div = document.createElement('div');
+                div.innerHTML = svgData;
+                document.body.appendChild(div);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
+    function createButterflies() {
+        const butterfliesContainer = document.body;
+
+        const containerRect = document.querySelector('.container').getBoundingClientRect();
+
+        for (let i = 0; i < 10; i++) {
+            const left = `${Math.random() * window.innerWidth}px`;
+            const top = `${Math.random() * window.innerHeight}px`;
+
+            const isInsideContainer =
+                left >= containerRect.left &&
+                left <= containerRect.right &&
+                top >= containerRect.top &&
+                top <= containerRect.bottom;
+
+            if (isInsideContainer) {
+                // If the position is inside the container, reposition the butterfly
+                i--;
+                continue;
+            }
+
+            const butterfly = document.createElement('div');
+            butterfly.className = 'butterfly';
+            butterfly.style.left = left;
+            butterfly.style.top = top;
+
+            const clonedSvg = document.querySelector('.butterfly-image').cloneNode(true);
+            clonedSvg.classList.remove('butterfly-image');
+            clonedSvg.classList.add('butterfly');
+
+            butterfly.appendChild(clonedSvg);
+
+            butterfliesContainer.appendChild(butterfly);
+        }
+    }
+</script>
+</body>
+</html>
